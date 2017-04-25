@@ -1,0 +1,12 @@
+*** Filesystem information:
+Filesystem      Size   Used  Avail Capacity  Mounted on
+/dev/disk0s2   559Gi  403Gi  156Gi    73%    /
+devfs          180Ki  180Ki    0Bi   100%    /dev
+map -hosts       0Bi    0Bi    0Bi   100%    /net
+map auto_home    0Bi    0Bi    0Bi   100%    /home
+/dev/disk0s4   139Gi   37Gi  102Gi    27%    /Volumes/BOOTCAMP
+
+*** Memory information:
+
+*** Killed processes information [dmesg | grep -i 'kill.*process'; tail -100 /var/log/messages | grep -i kill; tail -100 /var/log/syslog | grep -i kill]:
+

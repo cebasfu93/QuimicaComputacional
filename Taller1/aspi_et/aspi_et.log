@@ -1,0 +1,49 @@
+ 
+ JobID: clustergate-0-586d2559
+ BatchMin V11.4    Build  114015  Starting Time 04-Jan-2017 11:39:54
+ MacroModel. Copyright Schrodinger, LLC.
+ All rights reserved.
+
+ Input filename:  aspi_et.mae
+ Output filename: aspi_et-out.maegz
+ Atom-type file: /state/partition1/pruebaSchrod/mmshare-v3.6/bin/Linux-x86_64/../../data/atom.typ
+ Force field: /state/partition1/pruebaSchrod/macromodel-v11.4/bin/Linux-x86_64/../../data/OPLS_2005.fld
+ Read    27 atoms. Structure name, if any, appears on next line: 
+ Et
+ Quality of Force Field Parameters in Use:
+   Numbers of high, medium and low quality stretch parameters =   27    0    0
+   Numbers of high, medium and low quality bend parameters    =   44    0    0
+   Numbers of high, medium and low quality torsion parameters =   52    0    0
+   Interactions examined:        123 of        123 total, including unused params.
+      Stretch total=       27   constrained=        0
+         Bend total=       44   constrained=        0        linear=        0
+      Torsion total=       60   constrained=        0  out-of-plane=        8
+    Nonbonded total=      280      H-bonded=        0      ordinary=      280
+  Nonbonded cutoffs: CutVdw=   7.00    ;  CutEs=   12.0    
+
+Total energy:              42.8744 kJ/mol (      10.2472 kcal/mol )
+ Force-field terms:        42.8744 kJ/mol (      10.2472 kcal/mol )
+  Stretch:                  5.3545 kJ/mol (       1.2798 kcal/mol )
+  Bend:                     6.1514 kJ/mol (       1.4702 kcal/mol )
+  Proper torsion:          12.5645 kJ/mol (       3.0030 kcal/mol )
+  Out-of-plane:             0.1142 kJ/mol (       0.0273 kcal/mol )
+  Van der Waals:           34.4175 kJ/mol (       8.2260 kcal/mol )
+  Electrostatic:          -15.7278 kJ/mol (      -3.7590 kcal/mol )
+ Total Energy =      42.874 kJ/mol
+                   Total Energy =       42.8744 kJ/mol
+                        Stretch =        5.3545 kJ/mol
+                           Bend =        6.1514 kJ/mol
+                        Torsion =       12.5645 kJ/mol
+               Improper Torsion =        0.1142 kJ/mol
+                            VDW =       34.4175 kJ/mol
+                  Electrostatic =      -15.7278 kJ/mol
+        Explicit Hydrogen Bonds =        0.0000 kJ/mol
+                    Cross Terms =        0.0000 kJ/mol
+  
+ T.E. for cross-checking:        42.8744 kJ/mol
+ 
+BatchMin: normal termination                           04-Jan-2017 11:39:56
+
+real	0m2.467s
+user	0m1.793s
+sys	0m0.238s
