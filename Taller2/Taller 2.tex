@@ -1,0 +1,146 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc} %Permite escribir facilmente en español
+\usepackage{graphicx}
+\usepackage[top=1.0in, bottom=1in, left=1in, right=1in]{geometry}
+\title{Química Computacional \\ Taller 2}
+\date{Módulo de Mecánica Molecular \\ Mayo 2, 2017 \\ QUIM-3516 \\ }
+\author{Gian Pietro Miscione y Sebastián Franco Ulloa}
+
+\begin{document}
+
+\maketitle
+
+\begin{center}
+Este taller tiene como objetivo familiarizar al estudiante con \emph{PrepWizard}, \emph{LigPrep} y \emph{Glide}, las herramientas distribuidas por Schr\"odinger para preparar un receptor, ligandos y hacer \emph{docking}, respectivamente. Los estudiantes deberán manipular varias de las opciones ofrecidas por los programas y así entender a fondo su funcionamiento. A lo largo del taller, los estudiantes estudiarán un sistema biológico de una ADN girasa la cual está involucrada en el proceso de replicación del ADN bacteriano, por lo que su inhibición puede resultar en la muerte del microorganismo. Por ende, es un receptor llamativo para el diseño de medicamentos. 
+
+\end{center}
+
+\section{Preparación del receptor}
+El primer paso para un cálculo de \emph{docking} es la preparación del receptor, el cual, al venir de la base de datos PDB, contiene varios problemas discutidos en clase con anterioridad.
+\begin{itemize}
+    \item Para descargar el archivo \emph{*.pdb} correspondiente al receptor de interés, se debe ir a la página principal de la base de datos PDB (\url{http://www.rcsb.org/pdb/home/home.do}) y en el motor de búsqueda escribir ``DNA dyrase''.
+    \item Para filtrar más los resultados, en el costado izquierdo puede seleccionar en la sección de \textbf{ORGANISM}, la bacteria \emph{Staphylococcus Aureus}.
+    \item Buscar y seleccionar la entrada con código \textbf{2XCS}. En esta página puede encontrar toda la información pertinente del cristal.
+    \item En el recuadro \textbf{Download Files}, seleccionar \textbf{PDB Format} para descargar el arhcivo \emph{2xcs.pdb}.
+    \item Abrir con \emph{gedit} el archivo \emph{2xcs.pdb} e identificar los residuos y átomos faltantes al igual que los residuos con más de una conformación (Ayuda: Vaya a la línea 1088).
+    \item Ir a Maestro y, al igual que en el taller anterior, importar la estructura que dse descargó. Aunque de la configuración y la versión de Maestro, en verde se debería estar mostrando nuestro ligando de interés.
+    \item Jugar con la visualización de la proteína con las opciones del recuadro \textbf{Style} localizado en la parte superior derecha de Maestro. Debe identificar cuántas cadenas, moléculas, residuos, átomos y cargas tiene el sistema. También debe localizar la doble hebra de ADN y la posición del ligando.
+    \item Seleccionar en la esquina superior izquierda la opción \textbf{Protein Preparation Wizard}. Esta es la interfaz para la preparación del receptor.
+    \item Nótese que en el recuadro \textbf{Import structure into Workspace} se puede descargar el archivo \emph{*.pdb} escribiendo el código en el recuadro de texto. En este caso esto no es necesario.
+    \item En el recuadro \textbf{Preprocess the Workspace structure} deje todas las opciones predeterminada y además seleccione las opciones ``Fill in missing side chains using Prime'', ``Fill in missing loops using Prime'' y en ``Delete waters beyond \# \AA from het groups'' escriba 0.0. En este taller no se considerarán aguas por simplicidad. Haga click en \textbf{Preprocess}.
+    \item Luego puede ver, en \textbf{View Problems}, los problemas que tuvo Maestro al preparar el receptor. Por ejemplo, átomos faltantes, átomos a los que no se pudo asignar un \emph{atom type} y residuos con conformaciones alternas (¿hay algún residuo cerca al ligando? ¿Las conformaciones diferentes corresponden a interacciones químicas diferentes?).
+    \item En el recuadro \textbf{Review and Modify} puede ver las cadenas, moléculas no convencionales (\emph{het}), aguas, etc,...
+    \item En el recuadro \textbf{Refine}, se minimizan los hidrógenos los cuales se pudieron haber puesto mal en los pasos anteriores.
+    \item Seleccion la opción ``Minimize Hydrogens of Altered Species'' y luego haga click en \textbf{Optimize}.
+    \item Podemos ignorar la sección \textbf{Remove waters}, pues ya las eliminamos todas
+    \item En la última sección \textbf{Restrained minimization}, coloque un valor de RMSD igual a 0.30 y haga click en \textbf{Minimize}. Esta minimización va a relajar el sistema evitando que hayan átomos muy cercanos entre sí.
+    \item Note que en cada uno de los pasos descritos anteriormente se crea una nueva entrada que se importa automáticamente a Maestro, entonces, la última entrada corresponde al receptor preparado. Para no confundirlas es útil cambiarles el nombre.
+    \item Una buena idea para tener una noción de las interacciones presentes entre el ligando nativo y la proteína es hacer un mapa de interacciones. Maestro es capaz de hacer esto por nosotros. Seleccione la estructura preparada y seleccione en la esquina superior izquierda la opción \textbf{Ligand Interaction Diagram}.
+    \item Para \emph{Glide} en particular no es necesario eliminar el ligando nativo del cristal para hacer el \emph{docking}. El mismo entiende quién es el ligando nativo y lo ignora.
+    \item Como estamos ignorando el problema de las conformaciones alternas, Maestro, por defecto, va a usar las conformaciones `A'.
+    
+\end{itemize}
+
+\section{Generación de la cuadrícula}
+\label{grid}
+Procederemos con la generación de la cuadrícula la cual se hace con la herramiento \emph{Glide} (la misma que hará el \emph{docking}. Es decir, un único archivo que contendrá toda la información del receptor necesaria para hacer el \emph{docking}. Esto incluye geometría, conectividad, potenciales, restricciones, etc.
+
+\begin{itemize}
+    \item Selecciona e incluya la estructura del receptor preparado.
+    \item Busque en \emph{tasks} la opción ``Receptor Grid Generation'' y seleccione la herramienta que hace mención a \emph{Glide}.
+    \item Para excluir el ligando nativo del docking se le debe decir a \emph{Glide}. Para esto, en el recuadro \textbf{receptor}, seleccione ``Pick to identify the ligand'' y seleccione un átomo del ligando nativo.
+    \item Seleccione la opción ``Use input partial charges'' para que use las cargas de los \emph{atom types} que se asignaron durante la preparación del receptor. Si no se hiciera esto, \emph{Glide} volvería a asignar \emph{atom types}.
+    \item En la parte inferior del recuadro de \textbf{Advanced settings} se puede permitir que los átomos del receptor formen puente H con hidrógenos aromáticos, halógenos como receptores y halógenos como aceptores. En este caso ninguna de las opciones es particularmente importante.
+    \item En el recuadro \textbf{Site} se deben especificar los parámetros de la caja interna y externa. Ya que tenemos un ligando cocristalizado la mejor opción es centrar las cajas en el ``Centroid of Workspace ligand''. En el recuadro de \textbf{Advanced setting} se pueden personalizar las dimensiones de las cajas pero mantendremos las predeterminadas.
+    \item En el recuadro de \textbf{Constraints} vamos a darle la posibilidad a \emph{Glide} de fijar algunas restricciones (esto no lo obligará en el paso del \emph{docking}). Vaya a la pestaña de ``H-bond/Metal'' y luego seleccione los 2 átomos de oxígeno (del grupo carboxilato) presentes en los 2 residuos Asp83 (Ayuda: están interactuando con el ligando nativo).
+    \item En este ejemplo no vamos a darle libre rotación a ninguno de los dihedros que nos ofrece \emph{Glide} ni excluiremos ningún volumen. No obstante esto se puede hacer en las pestañas de \textbf{Rotatable Groups} y \textbf{Excluded Volumes}. OJO: No olvide que imponer restricciones al \emph{docking} puede resultar en el sesgo de los resultados.
+    \item Haga click en \textbf{Run}. Este cálculo debe tomar aproximadamente 3 minutos y resulta en un único archivo \emph{*.zip}.
+    
+\end{itemize}
+
+\section{Preparación de un ligando}
+\label{ligands}
+Hasta este punto terminamos de lidiar con el receptor, pero aun falta preparar el ligando, lo cual se hará con la herramienta \emph{LigPrep} de Schr\"odinger. En este caso haremos el \emph{docking} del ligando nativo y compararemos la pose predicha con la original del cristal.
+    \begin{itemize}
+        \item Seleccione e incluya en el espacio de trabajo la estructura ``2xcs'' NO preparada. Haga un duplicado de la estructura haciendo \emph{Click derecho $\rightarrow$ Duplicate $\rightarrow$ In place}.
+        \item Ahora seleccione solo el ligando haciendo click en la letra \textbf{L} presente en la parte superior derecha de Maestro en el recuadro ``Quick Select''. Luego seleccione la opción ``Invert'' y suprima para borrar todo excepto el ligando.
+        \item Busque en \emph{Tasks} la herramienta \emph{LigPrep}. Esto debería abrir un recuadro con una única pestaña.
+        \item Lo primero que se debe especificar es el (o los) ligando a preparar. El ligando a preparar puede estar en un archivo que no se haya importado a Maestro, o puede estar presente en el proyecto actual. Por simplicidad, haremos lo segundo.
+        \item Asegurese de que el ligando esté incluido en el área de trabajo y en la opción ``Use structures from:'' selecciones ``Workspace (\# included entries).
+        \item Al hacer \emph{docking} de un solo compuesto, no es necesario hacer un filtro, por lo que nos saltaremos esta opción. 
+        \item En este ejercicio generaremos todos los posibles estados de ionización en un pH de $7.0\pm2.0$ usando Epik (otra distribución de Sch\"odinger).
+        \item En este ejemplo no es necesario pero es buena costumbre siempre seleccionar la opción de ``Desalt''.
+        \item Seleccione la opción de ``Generate Tautomers''.
+        \item Con respecto a la estereoquímica, generaremos todas las posibles combinaciones (lo cual no es común), estableciendo el máximo de estructuras a 32.
+        \item Este cálculo generará un único archivo con todas las moléculas ya listas para hacerles el \emph{docking}. Este archivo puede ser \emph{*.maegz} o \emph{*.sdf}. Ambos formatos pueden almacenar la misma información pero el primero es un formato binario que solo puede leer Maestro mientras que el segundo corresponde a un archivo de texto que se puede abrir con la mayoría de programas en química computacional. Por estas razones se acostumbra a exportarlo como \emph{*.sdf}.
+        \item Haga click en \textbf{Run}. El resultado, aunque corresponda a un único compuesto, contiene varias moléculas. Analice las diferencias.
+    \end{itemize}
+
+\section{Docking}
+\label{docking}
+Una vez se han preparado el receptor y el ligando, podemos proceder a hacer la inserción de uno en el otro. Esto se hará con la misma herramienta con la que se generó la cuadrícula: \emph{Glide}.
+
+\begin{itemize}
+    \item Para hacer el \emph{docking} debemos abrir la ventana correspondiente para lo cual debe buscar en \emph{Tasks} la herramienta \emph{Ligand Docking}. Al hacer click debe abrir una ventana con 6 pestañan.
+    \item Lo primero que se debe especificar es la cuadrícula que se usará para hacer el \emph{docking}. Esto se hace en la parte superior de la ventana donde dice \textbf{Receptor Grid}. Busque en el navegador el archivo \emph{*.zip} generado en la seccion \ref{grid}.
+    \item En la pestaña \textbf{Ligands} se deben elegir las moléculas que se insertarán en el receptor. Estos ligando se pueden especificar como un archivo, como entradas seleccionadas y como entradas incluidas. Seleccione la opción de su preferencia pero sea consistente. e.g. si elige ``Workspace (Included Entries)'' asegurese de que todas las moléculas se muestren en el espacio de trabajo.
+    \item Dependiendo de los recursos computacionales disponibles, es posible que se quiera no evaluar todos los ligandos disponibles sino solo los primeros $N$. Seleccionar la casilla \emph{End} indica que se evaluarán toas las moléculas del archivo.
+    \item Seleccione la casilla \emph{Use input partial charges} por razones discutidas anteriormente. Mantenga el resto de opciones en esta pestaña con sus valores predeterminados.
+    \item En la pestaña de \textbf{Setting} se debe especificar todo lo concerniente al \emph{docking}. La casilla \emph{Precision} es donde se especifica la función de \emph{scoring} a usar. En este caso usaremos $SP$.
+    \item En la casilla \emph{Ligand Sampling} se especifica si se desea hacer \emph{docking} con el ligando flexible o rígido. En este caso lo dejaremos flexible.
+    \item El resto de opciones las dejaremos en sus valores predeterminados pero asegúrese de marcar con un chulo las opciones ``Add Epik state penalties to docking score'', ``Reward intramolecular H-bonds'' y ``Enhance planarity of conjugated pi groups''
+    \item En la parte inferior del recuadro de \textbf{Advanced Settings} se puede especificar si se desea que los átomos de los ligandos puedan participar en puentes H con hidrógenos aromáticos, halógenos como aceptores o halógenos como donores.
+    \item En la pestaña de \textbf{Constraints} se mostrarán las restricciones que se definieron durante la generación de la cuadrícula. Usted deberá hacer el cálculo de docking 2 veces. La primera vez sin ninguna restricción y la segunda vez exigiendo un puente de hidrógeno con al menos uno de los átomos de oxígeno seleccionados en la sección \ref{grid}. Compare los resultados.
+    \item En la pestaña \textbf{Output} se especifican los aspectos técnicos de lo que retornará el cálculo. En este caso mantendremos casi todas las opciones con sus valores predeterminados.
+    \item En la opción ``Write at most: \# poses per ligand''. Cambie el número a 3. Esto hará que el programa imprima las 3 mejores poses del ligando en el receptor (para cada molécula).
+    \item Seleccione la opción ``Write per-residue interaction scores'' y pídalo para residuos hasta 5 \AA del centro de la cuadrícula. Con esto \emph{Glide} imprimirá la energía de interacción con cada uno de los residuos que satisfaga esta condición.
+    \item Haga click en \emph{Run}. El archivo más importante que se genera con este tipo de cálculos es un archivo \emph{*\_pv.maegz}.
+    \item Importe (si no se hizo automáticamente) el archivo mencionado anteriormente. La primera entrada corresponde al receptor y las demás son las moléculas en sus respectivas poses.
+    \item Para mantener el receptor fijo dele \emph{click derecho $\rightarrow$ Show in Workspace $\rightarrow$ Fix wihtin project}. Luego para moverse entre las moléculas, solo inclúyalas en el espacio de trabajo. Así podrá ver más rápidamente todos los complejos predichos.
+    \item Para ver propiedades como las interacciones por residuos, puede abrir la tabla del proyecto (símbolo \# en la parte superior derecha de Maestro). Ahí se mostrarán todas las propiedades de todas las entradas del proyecto. Dentro de estas propiedades se encuentran dos tituladas ``Glide Score''  y ``Docking score''. ¿Cuál es la diferencia entre estas dos columnas? En la tabla también encontrará las contribuciones energéticas de cada uno residuo de los residuos especificados.
+\end{itemize}
+
+\section{Búsqueda conformacional}
+Es posible que una molécula tenga una muy buena energía libre de enlace ($\Delta G_{bind}$) pero que no sea un buen inhibidor. Esto puede ocurrir cuando el ligando requiere de demasiada energía para llegar a la pose en la que interactúa propiamente con el receptor. En otras palabras, si la energía del mínimo global es mucho más baja que la energía de la molécula en la pose de inhibición, su actividad puede ser menor que la predicha. Para verificar esto haremos los mismo cálculos que se realizaron en el taller anterior.
+\begin{itemize}
+    \item Identifique la molécula con mejor energía libre de unión.
+    \item Realize un cálculo de \emph{Single-Point-Energy} con los mismos parámetros especificados en el taller anterior, de la molécula del inciso anterior en la pose predicha.
+    \item Identifique la energía potencial interna en la tabla del proyecto.
+    \item Ahora compararemos esta energía con la energía del mínimo global. Para esto vaya a \emph{Tasks $\rightarrow$ Conformational Search (Macromodel)}
+    \item Deje casi todas las opciones con sus valores predeterminados.
+    \item En la pestaña de \textbf{CSearch} se especifica el algoritmo con el que se hará la búsqueda conformacional. En la opción \emph{Method} seleccione ``Torsional Sampling (MCMM)'' este es el método explicado en clase. 
+    \item Asegúrese de selecciona e incluir únicamente la molécula cuya búsqueda se desea hacer.
+    \item en la opción \emph{Number of structures to save for each search}, el $0$ significa guardar todas las estructuras no redundantes. Esto puede resultar en sientos de geometrías para una misma molécula. Cambie este número a $1$ para que el programa solo imprima una molécula (el mínimo global).
+    \item Haga click en \textbf{Run}.
+    \item Compare las geometrías y los valores de energía potencial interna cuando la molécula se encuentra en su estado ligado versus cuando está en su mínimo global.
+\end{itemize}
+
+\section{Virtual Screening}
+En los cálculos anteriores se estudió una única molécula. Si tuvieramos interés en encontrar nuevos compuestos potencialmente activos sería necesario estudiar una mayor variedad de compuestos. En esta sección usaremos la cuadrícula generada en el paso \label{grid} pero haremos el \emph{docking} de compuestos con estructuras disponibles en línea pero cuyas actividades desconocemos.
+\begin{itemize}
+    \item Los ligandos los descargaremos de la base de datos ZINC (\url{http://zinc.docking.org/}). Vaya a la base de datos y haga click en las siguientes opciones:
+    \begin{center}
+    \emph{Subsets $\rightarrow$ Catalog $\rightarrow$ Biosynth $\rightarrow$ Downloads $\rightarrow$ All (SDF, Mid pH 6-8)}
+    \end{center}
+    Así debe descargarse \emph{*.sdf}.
+    \item Importe el archivo que acaba de descargar en Maestro (Maestro admite formatos comprimidos). En total debe haber abierto 1609 compuestos.
+    \item Por motivos de tiempo, para disminuir el número de ligandos, quédese con los primeros 200 que se importaron y elimine los demás.
+    \item Prepare los ligandos similar a como se hizo en la sección \ref{ligands}. Esta vez filtre los compuestos para quedarse únicamente con aquellos que tengan un peso molecular entre $250$ y $500g/mol$ y que tengan una carga total entre $\{-2,2\}$. Además seleccione la opción ``Retain specified chiralities (vary other chiral centers)''.
+    \item Haga el \emph{docking} de la misma manera en la que se hizo en la seccion \ref{docking}.
+    \item ¿Cuál es el compuesto más tentativo para decir que va a ser un buen inhibidor? ¿Qué le dice su instinto químico? ¿Se ven las interacciones que se ven con el ligando nativo?
+\end{itemize}
+
+\section{Re-scoring con MM-GBSA}
+Es posible que un ligando parezca que va a ser un muy buen inhibidor con base en la función de \emph{scoring GlideSP}, pero que en verdad no lo sea. Esto puede ocurrir por varias razones, una de ellas es que esta función no es la mejor de todas y está sujeta mostrarnos falsos positivos. Una forma de reducir esta incertidumbre es usando una función de \emph{scoring} más exigente como lo es \emph{MM-GBSA}. Esta función usa un campo de fuerza más exacto que la familia OPLS-AA pero tarda más en evaluarse. Para usar esta función se debe tener acceso a la instancia \emph{Prime} de Schr\"odinger.
+
+\begin{itemize}
+    \item Identifique las 10 moléculas con mejor energía libre de enlace ($\Delta G_{bind}$).
+    \item Incluya el receptor en el espacio de trabajo y seleccione los 10 ligandos a estudiar. 
+    \item En el recuadro de \emph{Tasks} busque la herramiento \emph{MM-GBSA (Prime)}.
+    \item Especifique que el receptor será aquel incluido en el espacio de trabajo y que los ligandos serán las moléculas seleccionadas. Esto también se puede hacer con el archivo \emph{*\_pv.maegz} que nos otorga \emph{Glide} tras el cálculo \emph{docking} pero en este caso ese archivo contiene todos los ligandos mientras que solo nos interesa estudiar 10.
+    \item Asegúrese de que el modelo de solvatación esté fijado en ``VSGB''. Ya que no vamos a considerar la flexibilidad del receptor, podemos ignorar la última sección del recuadro. 
+    \item Haga click en \textbf{Run}.
+    \item El resultado de este cálculo es un archivo \emph{*.maegz} que tiene los nuevos complejos. Durante el cálculo la geometría de los ligandos y el receptor cambiaron porque se minimizan en un de los pasos. Esto no se debe confundir con la exploración del espacio conformacional. Lo que hizo \emph{MM-GBSA} solo fue una minimización, no se le dió flexibilidad a la proteína en ningún momento.
+    \item ¿Cómo se comparan las nuevas geometrías con las predichas con \emph{Glide} para estos 10 compuestos? ¿Según \emph{MM-GBSA} cuál es el compuesto que más probablemente sea activo? ¿El orden es el mismo que el ofrecido por \emph{GlideSP}?
+\end{itemize}
+\end{document}
