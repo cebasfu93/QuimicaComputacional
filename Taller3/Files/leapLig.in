@@ -1,0 +1,9 @@
+source /home/guest/GROMACS/Software/amber14/dat/leap/cmd/oldff/leaprc.ff99SBildn
+source leaprc.gaff
+loadamberparams 31N.frcmod
+31N = loadmol2 31N.mol2
+check 31N
+saveoff 31N 31N.lib
+saveamberparm 31N 31N.prmtop 31N.inpcrd
+#savepdb 31N 31N_leap.pdb
+quit

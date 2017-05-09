@@ -1,0 +1,10 @@
+source /home/guest/GROMACS/Software/amber14/dat/leap/cmd/oldff/leaprc.ff99SBildn
+source leaprc.gaff
+loadamberparams 31N.frcmod
+loadoff 31N.lib
+loadamberparams ./MG.frcmod
+loadamberprep ./MG.prep
+complex = loadpdb ./complex.pdb
+saveamberparm complex sys.prmtop sys.inpcrd
+#savepdb complex system.pdb
+quit
